@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 from Linear import Linear, MSE
 import Non_linear
 
-# np.random.seed(1)
+np.random.seed(1)
 
 def testlinear(datax,datay):
     ## Lineaire et MSE
@@ -27,8 +27,8 @@ def testlinear(datax,datay):
 def testNonLinear(X,Y):
     sigmoide = Non_linear.Sigmoide()
     tanh = Non_linear.TanH()
-    coche1 = Linear(10,5)
-    coche2 = Linear(5,1)
+    coche1 = Linear(2,10)
+    coche2 = Linear(10,1)
     mse = MSE()
     res_sigmoide = None
     loss = []
@@ -41,24 +41,24 @@ def testNonLinear(X,Y):
         res_sigmoide = sigmoide.forward(res_lin2)
         #loss
         res = [res_sigmoide[i] > 0.5 for i in range(len(res_sigmoide))]
-        res_mse2 = mse.forward(Y.reshape(-1, 1), res)
-        print("mse",res_mse2.shape)
         loss.append(sum(mse.forward(Y.reshape(-1, 1), res)))
         #retro-propager
-        delta_sig = sigmoide.backward_delta(res_lin2,res_mse2)
+        res_mse = mse.backward(Y.reshape(-1, 1), res)
+        delta_sig = sigmoide.backward_delta(res_lin2,res_mse)
         coche2.backward_update_gradient(res_tanh, delta_sig)
-        coche2.update_parameters(0.1)
+        coche2.update_parameters(0.05)
 
         delta_lin2 = coche2.backward_delta(datax, delta_sig)
         delta_tanh = tanh.backward_delta(res_lin1,delta_lin2)
         coche1.backward_update_gradient(datax, delta_tanh)
-        coche1.update_parameters(0.1)
-        print(coche1._gradient)
+        coche1.update_parameters(0.05)
     return loss,"Nonlinear",maxIter
 #init data
-datax = np.random.randn(20,10)
-datay = np.random.choice([-1,1],20,replace=True)
-dataymulti = np.random.choice(range(10),20,replace=True)
+datax = np.random.randn(100,2)
+# datay = np.random.choice([-1,1],20,replace=True)
+datay = np.array([1 if datax[i,0]*datax[i,1]>0 else 0 for i in range(100)])
+print(datay)
+# dataymulti = np.random.choice(range(10),20,replace=True)
 
 #loss,titre,ite = testlinear(datax,datay)
 loss,titre,ite = testNonLinear(datax,datay)
