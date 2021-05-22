@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 from Linear import Linear, MSE
 import Non_linear
 
-np.random.seed(1)
+# np.random.seed(1)
 
 def testlinear(datax,datay):
     ## Lineaire et MSE
@@ -42,18 +42,18 @@ def testNonLinear(X,Y):
         #loss
         res = [res_sigmoide[i] > 0.5 for i in range(len(res_sigmoide))]
         res_mse2 = mse.forward(Y.reshape(-1, 1), res)
+        print("mse",res_mse2.shape)
         loss.append(sum(mse.forward(Y.reshape(-1, 1), res)))
         #retro-propager
         delta_sig = sigmoide.backward_delta(res_lin2,res_mse2)
         coche2.backward_update_gradient(res_tanh, delta_sig)
-        coche2.update_parameters()
+        coche2.update_parameters(0.1)
 
         delta_lin2 = coche2.backward_delta(datax, delta_sig)
         delta_tanh = tanh.backward_delta(res_lin1,delta_lin2)
         coche1.backward_update_gradient(datax, delta_tanh)
-        coche1.update_parameters()
-        print(res_lin2,res_sigmoide)
-    print(Y[:5])
+        coche1.update_parameters(0.1)
+        print(coche1._gradient)
     return loss,"Nonlinear",maxIter
 #init data
 datax = np.random.randn(20,10)

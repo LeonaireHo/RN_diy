@@ -18,6 +18,7 @@ class Linear(Module):
         return data@self._parameters
 
     def backward_update_gradient(self, input, delta):
+        # print("grad",input.shape,delta.shape)
         self._gradient = input.T@delta
 
     def backward_delta(self, input, delta):
