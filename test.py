@@ -4,13 +4,9 @@ from Module import *
 import numpy as np
 import matplotlib.pyplot as plt
 from Linear import Linear, MSE
-from Non_linear import Sigmoide
+import Non_linear
 
 np.random.seed(1)
-
-datax = np.random.randn(20,10)
-datay = np.random.choice([-1,1],20,replace=True)
-dataymulti = np.random.choice(range(10),20,replace=True)
 
 def testlinear(datax,datay):
     ## Lineaire et MSE
@@ -26,40 +22,49 @@ def testlinear(datax,datay):
         l_mse.append(sum(res_mse))
         linear.backward_update_gradient(datax,delta_mse)
         linear.update_parameters()
-        grad_lin = linear._gradient
-        delta_lin = linear.backward_delta(datax,delta_mse)
-    plt.plot([i for i in range(0,100)],l_mse,color="red",linewidth="3")
-    plt.title("Linear")
-    plt.xlabel("iteration")
-    plt.ylabel("loss")
-    plt.savefig("plot/linear")
+    return l_mse,"Linear",100
 
 def testNonLinear(X,Y):
-    sigmoide = Sigmoide()
-    tanh = Tanh()
+    sigmoide = Non_linear.Sigmoide()
+    tanh = Non_linear.TanH()
     coche1 = Linear(10,5)
     coche2 = Linear(5,1)
     mse = MSE()
     res_sigmoide = None
     loss = []
-    for _ in range(100):
+    maxIter = 100
+    for _ in range(maxIter):
         #forward
         res_lin1 = coche1.forward(datax)
         res_tanh = tanh.forward(res_lin1)
         res_lin2 = coche2.forward(res_tanh)
         res_sigmoide = sigmoide.forward(res_lin2)
         #loss
-        res_mse2 = mse.forward(Y.reshape(-1, 1), res_sigmoide)
-        res = [res_sigmoide[i] > 0 for i in range(res_sigmoide.size())]
-        loss.append(mse.forward(Y.reshape(-1, 1), res))
+        res = [res_sigmoide[i] > 0.5 for i in range(len(res_sigmoide))]
+        res_mse2 = mse.forward(Y.reshape(-1, 1), res)
+        loss.append(sum(mse.forward(Y.reshape(-1, 1), res)))
         #retro-propager
-        sigmoide.backward_delta()
-        res_lin2.backward_update_gradient(res_tanh, res_mse2)
-        res_lin2.update_parameters()
-        delta_lin2 = res_lin2.backward_delta(datax, res_mse2)
+        delta_sig = sigmoide.backward_delta(res_lin2,res_mse2)
+        coche2.backward_update_gradient(res_tanh, delta_sig)
+        coche2.update_parameters()
 
+        delta_lin2 = coche2.backward_delta(datax, delta_sig)
         delta_tanh = tanh.backward_delta(res_lin1,delta_lin2)
-        res_lin1.backward_update_gradient(datax, delta_tanh)
+        coche1.backward_update_gradient(datax, delta_tanh)
+        coche1.update_parameters()
+        print(res_lin2,res_sigmoide)
+    print(Y[:5])
+    return loss,"Nonlinear",maxIter
+#init data
+datax = np.random.randn(20,10)
+datay = np.random.choice([-1,1],20,replace=True)
+dataymulti = np.random.choice(range(10),20,replace=True)
 
-
-testlinear(datax,datay)
+#loss,titre,ite = testlinear(datax,datay)
+loss,titre,ite = testNonLinear(datax,datay)
+print(loss)
+plt.plot([i for i in range(0,ite)],loss,color="red",linewidth="3")
+plt.title(titre)
+plt.xlabel("iteration")
+plt.ylabel("loss")
+plt.savefig("plot/"+titre)
