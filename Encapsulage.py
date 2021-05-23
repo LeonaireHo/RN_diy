@@ -33,19 +33,20 @@ class Sequential:
 
 class Optim:
     def __init__(self,moduleList,loss=MSE,eps=1e-3):
-        self.moduleList=moduleList #reaseau
-        self.loss=loss() #fonction de cout
-        self.eps=eps #un pas
+        self.moduleList=moduleList
+        self.loss=loss
+        self.eps=eps
 
     def step(self,batch_x,batch_y):
-        #calcule la sortie du reseau
-        self.moduleList.moduleList_update(batch_x,batch_y,self.loss,self.eps)
+        self.moduleList.forward(batch_x)
+        self.moduleList.backward(batch_x, batch_y,fctsort = self.loss,gradient_step=self.eps)
 
-def SGD(moduleList,datax,datay,batch_size,ite):
-    o=Optim(moduleList)
-    for i in range(ite):
-        inds=np.random.choice([i for i in range(len(datax))],size=batch_size)
-        batch_x=datax[inds]
-        batch_y=datay[inds]
-        o.step(batch_x, batch_y)
-    return moduleList
+def SGD(moduleList,X,Y,batch_size,loss,maxiter):
+    rn = Optim(moduleList,loss=loss)
+    for _ in range(maxiter):
+        indx=np.random.choice([i for i in range(len(X))],size=batch_size)
+        batch_x=X[indx]
+        batch_y=Y[indx]
+        print(batch_x,batch_y)
+        rn.step(batch_x, batch_y)
+    return rn

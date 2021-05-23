@@ -4,7 +4,7 @@ from Module import *
 import numpy as np
 import matplotlib.pyplot as plt
 from Linear import Linear, MSE
-from Encapsulage import Sequential
+from Encapsulage import Sequential,Optim,SGD
 import Non_linear
 
 # np.random.seed(1)
@@ -74,6 +74,36 @@ def testSequential(X,Y):
         seq.backward(X,Y,fctsort = fctSig)
     return seq.histLoss,"Sequential",maxIter
 
+def testOptim(X,Y):
+    #construct
+    seq = Sequential()
+    seq.add_module(Linear(2,5))
+    seq.add_module(Non_linear.TanH())
+    seq.add_module(Linear(5,1))
+    seq.add_module(Non_linear.Sigmoide())
+    def fctSig(res):
+        return np.array([[1 if res[i] > 0.5 else 0] for i in range(len(res))])
+    #evolute
+    maxIter = 100
+    optim = Optim(seq,loss = fctSig)
+    for _ in range(maxIter):
+        optim.step(X,Y)
+    return optim.moduleList.histLoss,"Optim",maxIter
+
+def testSGD(X,Y):
+    #construct
+    seq = Sequential()
+    seq.add_module(Linear(2,5))
+    seq.add_module(Non_linear.TanH())
+    seq.add_module(Linear(5,1))
+    seq.add_module(Non_linear.Sigmoide())
+    def fctSig(res):
+        return np.array([[1 if res[i] > 0.5 else 0] for i in range(len(res))])
+    #evolute
+    maxIter = 300
+    rn = SGD(seq,X,Y,50,fctSig,maxIter)
+    return rn.moduleList.histLoss,"SGD",maxIter
+
 #init data
 datax = np.random.randn(100,2)
 datay = np.random.choice([-1,1],100,replace=True)
@@ -85,7 +115,9 @@ print(datay)
 
 #loss,titre,ite = testlinear(datax,datay)
 # loss,titre,ite = testNonLinear(datax,datay)
-loss,titre,ite = testSequential(datax,datay)
+# loss,titre,ite = testSequential(datax,datay)
+# loss,titre,ite = testOptim(datax,datay)
+loss,titre,ite = testSGD(datax,datay)
 print(loss)
 plt.plot([i for i in range(0,ite)],loss,color="red",linewidth="3")
 plt.title(titre)
