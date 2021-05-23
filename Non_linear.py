@@ -18,7 +18,7 @@ class Sigmoide(Module):
 
     def backward_delta(self, input, delta):
         ## Calcul la derivee de l'erreur
-        print(input.shape, delta.shape)
+        # print("sig",input.shape,delta.shape)
         return (self.forward(input)*(1-self.forward(input))) * delta
 
 class TanH(Module):
@@ -40,4 +40,4 @@ class TanH(Module):
 
     def backward_delta(self, input, delta):
         ## Calcul la derivee de l'erreur
-        return (1-self.forward(input)*2)*delta
+        return (1-self.forward(input)**2)*delta

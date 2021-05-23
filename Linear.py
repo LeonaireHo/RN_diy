@@ -27,4 +27,5 @@ class Linear(Module):
 
     def update_parameters(self, gradient_step=1e-3):
         ## Calcule la mise a jour des parametres selon le gradient calcule et le pas de gradient_step
+        # print("para",self._parameters.shape)
         self._parameters += gradient_step*self._gradient
