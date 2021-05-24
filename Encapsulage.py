@@ -43,7 +43,7 @@ class Optim:
         self.fctsort = fctsort
 
     def step(self,batch_x,batch_y):
-        # print("step",self.moduleList.forward(batch_x)[0],batch_y[0])
+        self.moduleList.forward(batch_x)
         self.moduleList.backward(batch_x, batch_y,fctsort = self.fctsort,gradient_step=self.eps,loss = self.loss)
 
 def SGD(moduleList,X,Y,batch_size,loss,fctsort,maxiter):

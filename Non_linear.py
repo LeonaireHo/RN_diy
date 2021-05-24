@@ -51,7 +51,7 @@ class Tanh(Module):
         ## Annule gradient
         pass
 
-class ReLu(Module):
+class ReLU(Module):
     def __init__(self):
         pass
 

@@ -38,5 +38,5 @@ class Linear(Module):
         # print("para",self._parameters.shape)
         # print(self._gradient)
         self._parameters += gradient_step*self._gradient
-        # if self._parameters.shape == (10,100):
-        #     print("param",self._parameters[0][:10])
+        if self._parameters.shape == (50, 10):
+            print("param",self._parameters[0][:10])
