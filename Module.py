@@ -14,8 +14,7 @@ class Module(object):
 
     def zero_grad(self):
         ## Annule gradient
-        self._gradient = np.zeros(self._gradient.shape)
-
+        pass
     def forward(self, X):
         ## Calcule la passe forward
         pass
