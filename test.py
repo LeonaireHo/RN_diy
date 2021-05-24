@@ -149,7 +149,7 @@ def testSoftmax():
     # print(onehot[0])
     for _ in range(maxIter):
         optim.step(X, onehot)
-    return optim.moduleList.histLoss, "Sodtmax", maxIter
+    return optim.moduleList.histLoss, "Softmax", maxIter
 
 def testAutoEncoder():
     #pepre data
@@ -186,7 +186,7 @@ def testAutoEncoder():
         print(i)
         encodage.forward(datax)
         # print(encodage.forwards[-1][0])
-        encodage.backward(datax,datax,loss=BCEloss,gradient_step=0.1)
+        encodage.backward(datax,datax,loss=BCE,gradient_step=0.1)
         if i % 10 == 0:
             # plt.figure()
             # plt.imshow(datax[0].reshape(16, 16), cmap="gray")
@@ -216,16 +216,16 @@ datay = np.array([1 if datax[i][1] > np.sin(datax[i][0]) else 0 for i in range(1
 # loss,titre,ite = testSequential(datax,datay)
 # loss,titre,ite = testOptim(datax,datay)
 # loss,titre,ite = testSGD(datax,datay)
-# loss,titre,ite = testSoftmax()
-loss,titre,ite = testAutoEncoder()
+loss,titre,ite = testSoftmax()
+# loss,titre,ite = testAutoEncoder()
 
 
 
 
-# print(loss)
-# plt.plot([i for i in range(0,ite)],loss,color="red",linewidth="3")
-# plt.title(titre)
-# plt.xlabel("iteration")
-# plt.ylabel("loss")
-# plt.savefig("plot/"+titre)
+print(loss)
+plt.plot([i for i in range(0,ite)],loss,color="red",linewidth="3")
+plt.title(titre)
+plt.xlabel("iteration")
+plt.ylabel("loss")
+plt.savefig("plot/"+titre)
 
