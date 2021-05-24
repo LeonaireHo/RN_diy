@@ -5,6 +5,7 @@ class Softmax(Module):
     def forward(self, X):
         # print(X)
         # print("soft",(np.exp(X)/ np.sum(np.exp(X),axis = 1).reshape(X.shape[0],1)))
+        X = np.maximum(X,1e-8)
         return np.exp(X)/ np.sum(np.exp(X),axis = 1).reshape(X.shape[0],1)
 
     def update_parameters(self,gradient_step=None):
